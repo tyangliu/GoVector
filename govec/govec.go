@@ -106,6 +106,11 @@ func (gv *GoLog) GetCurrentVC() []byte {
 	return gv.currentVC
 }
 
+func (gv *GoLog) LogThisf(ProcessID string, VCString string, format string, args ...interface{}) bool {
+	message := fmt.Sprintf(format, args...)
+	return gv.LogThis(message, ProcessID, VCString)
+}
+
 func (gv *GoLog) LogThis(Message string, ProcessID string, VCString string) bool {
 	complete := true
 	var buffer bytes.Buffer
@@ -133,6 +138,10 @@ func (gv *GoLog) LogThis(Message string, ProcessID string, VCString string) bool
 
 }
 
+func (gv *GoLog) LogLocalEventf(format string, args ...interface{}) bool {
+	return gv.LogLocalEvent(fmt.Sprintf(format, args...))
+}
+
 func (gv *GoLog) LogLocalEvent(Message string) bool {
 
 	//Converting Vector Clock from Bytes and Updating the gv clock
@@ -158,6 +167,10 @@ func (gv *GoLog) LogLocalEvent(Message string) bool {
 	}
 
 	return ok
+}
+
+func (gv *GoLog) PrepareSendf(buf interface{}, format string, args ...interface{}) []byte {
+	return gv.PrepareSend(fmt.Sprintf(format, args...), buf)
 }
 
 //This function is meant to be used immidatly before sending.
@@ -221,6 +234,10 @@ func (gv *GoLog) PrepareSend(mesg string, buf interface{}) []byte {
 	//return wrapperBuffer bytes which are wrapperEncoderoded as gob. Now these bytes can be sent off and
 	// received on the other end!
 	return wrapperBuffer.Bytes()
+}
+
+func (gv *GoLog) UnpackReceivef(buf []byte, unpack interface{}, format string, args ...interface{}) {
+	gv.UnpackReceive(fmt.Sprintf(format, args...), buf, unpack)
 }
 
 //UnpackReceive is used to unmarshall network data into local
